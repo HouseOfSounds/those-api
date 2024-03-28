@@ -2,16 +2,16 @@
   "name": "hos",
   "version": "1.0.0",
   "description": "hos",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config server.js",
-    "prod": "node -r dotenv/config server.js",
+    "dev": "nodemon -r dotenv/config index.js",
+    "prod": "node -r dotenv/config index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "airflow"
   ],
-  "author": "Abiodun",
+  "author": "Chris",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
