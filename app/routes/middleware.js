@@ -12,7 +12,19 @@ module.exports = function (app) {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   //app.use(cookieParser());
-  app.use(cors());
+  // app.use(cors());
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+
+        return callback(null, true);
+      },
+      credentials: true,
+    })
+  );
+  // app.use(raw());
+
   // app.use(
   //   cors({
   //     origin: (origin, callback) => {

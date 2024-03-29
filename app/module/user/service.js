@@ -21,6 +21,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+let changeToken;
+
 async function setAuth(userObj) {
   const id = userObj._id;
   userObj.id = id;
@@ -34,7 +36,7 @@ async function setAuth(userObj) {
     { token: userObj.token },
     { returnOriginal: false }
   );
-  return userToken;
+  return { userToken, changeToken };
 }
 
 const signup = async (body) => {
@@ -95,6 +97,10 @@ async function login(body) {
     if (!isMatch) {
       throw new AuthenticationError(` Password is incorrect !`);
     }
+
+    changeToken = jwt.sign({ userId: user._id }, secretKey, {
+      expiresIn: "5h",
+    });
 
     return {
       success,
