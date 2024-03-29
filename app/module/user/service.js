@@ -36,7 +36,7 @@ async function setAuth(userObj) {
     { token: userObj.token },
     { returnOriginal: false }
   );
-  return { userToken, changeToken };
+  return { userToken };
 }
 
 const signup = async (body) => {
@@ -97,10 +97,6 @@ async function login(body) {
     if (!isMatch) {
       throw new AuthenticationError(` Password is incorrect !`);
     }
-
-    changeToken = jwt.sign({ userId: user._id }, secretKey, {
-      expiresIn: "5h",
-    });
 
     return {
       success,
