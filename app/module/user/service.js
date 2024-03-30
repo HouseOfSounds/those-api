@@ -1,4 +1,10 @@
-const { success, encodeJwt, decodeJwt, ExistsError } = require("iyasunday");
+const {
+  success,
+  encodeJwt,
+  decodeJwt,
+  ExistsError,
+  AuthenticationError,
+} = require("iyasunday");
 const bcrypt = require("bcrypt");
 const { User } = require("./model");
 const nodemailer = require("nodemailer");
@@ -26,11 +32,13 @@ let changeToken;
 async function setAuth(userObj) {
   const id = userObj._id;
   userObj.id = id;
+
   userObj.token = await encodeJwt({
     data: { id, createdAt: new Date() },
     secreteKey: process.env.APP_KEY,
     duration: process.env.JWT_TOKEN_VALIDITY,
   });
+
   const userToken = await User.findByIdAndUpdate(
     userObj._id,
     { token: userObj.token },
@@ -65,8 +73,8 @@ const signup = async (body) => {
         expiresIn: "1h",
       });
 
-      // await sendVerificationMail(email, verifyToken);
-      const theLink = `http://those.app/verify-account?token=${verifyToken}`;
+      // const theLink = `https://beatlab.vercel.app/verify-account?token=${verifyToken}`;
+      const theLink = `https://beatlabapi.vercel.app/v1/verify-account?token=${verifyToken}`;
       const mailSubject = "Account Creation";
       const mailBody = `Your account has been created successfully. \nClick the following link to verify your email: ${theLink}`;
 
@@ -108,31 +116,21 @@ async function login(body) {
   }
 }
 
-const listUsers = async (req) => {
+const listUsers = async () => {
   try {
-    const token = req.headers["authorization"];
-    if (!token) {
-      throw new AuthenticationError("Token not provided");
-    }
-
-    const decoded = await decodeJwt(token, process.env.APP_KEY);
-
-    if (!decoded) {
-      throw new AuthenticationError("Invalid token !");
-    }
-
     const users = await User.find();
+
     return {
       success,
       data: users,
       message: `Users Listed Successfully`,
     };
   } catch (err) {
-    throw err;
+    return { message: "Internal Server Error" };
   }
 };
 
-const resetPassword = async (req, res) => {
+const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -145,8 +143,8 @@ const resetPassword = async (req, res) => {
       expiresIn: "1h",
     });
 
-    const theLink = `http://those.app/reset-password?token=${resetToken}`;
-    const mailSubject = "Password Reset";
+    const theLink = `https://beatlab.vercel.app/forgot-password?token=${resetToken}`;
+    const mailSubject = "BeatLab Password Reset";
     const mailBody = `Click the following link to reset your password: ${theLink}`;
 
     await sendEMail(senderMail, email, mailSubject, mailBody);
@@ -159,10 +157,9 @@ const resetPassword = async (req, res) => {
   }
 };
 
-const changePassword = async (req, res) => {
+const resetPassword = async (req, res) => {
   try {
-    const { token } = req.query;
-    const { newPassword } = req.body;
+    const { token, password } = req.body;
 
     const decodedToken = jwt.verify(token, secretKey);
 
@@ -171,12 +168,12 @@ const changePassword = async (req, res) => {
     }
 
     const user = await User.findById(decodedToken.userId);
+
     if (!user) {
-      // return res.status(404).json({ error: "User not found" });
       throw "User does not exist !";
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
     user.status = ACCOUNT_STATUS.ACTIVE;
 
@@ -184,12 +181,54 @@ const changePassword = async (req, res) => {
 
     await user.save();
 
-    const mailSubject = "Password Changed !";
+    const mailSubject = "BeatLab Password Changed !";
     const mailBody = `Your account [${email}], has been successfully updated with a new password.`;
 
     await sendEMail(senderMail, email, mailSubject, mailBody);
 
     return res.json({
+      data: user,
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const token = req.headers["authorization"];
+    const { password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword)
+      return res.status(200).json({ message: "Password does not match !" });
+
+    const decoded = await decodeJwt(token, process.env.APP_KEY);
+
+    if (!decoded) {
+      return res.status(403).json({ error: "Invalid authorization token !" });
+    }
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(200).json({ message: "User does not exist !" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+
+    const email = user.email;
+
+    await user.save();
+
+    const mailSubject = "BeatLab Password Changed !";
+    const mailBody = `Your account [${email}], has been successfully updated with a new password.`;
+
+    await sendEMail(senderMail, email, mailSubject, mailBody);
+
+    return res.json({
+      success,
       data: user,
       message: "Password updated successfully",
     });
@@ -250,6 +289,7 @@ module.exports = {
   signup,
   login,
   listUsers,
+  forgotPassword,
   resetPassword,
   changePassword,
   verifyAccount,

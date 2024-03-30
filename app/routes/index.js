@@ -1,12 +1,11 @@
-const { errorMessage, joiValidator } = require('iyasunday');
-const user = require('../module/user')
+const { errorMessage, joiValidator } = require("iyasunday");
+const user = require("../module/user");
 //const category = require('../module/categories');
 
-module.exports = function (app){
+module.exports = function (app) {
   const version = "/v1";
 
   app.use(version, user);
-
 
   app.use((err, req, res, next) => {
     if (err) {
@@ -16,12 +15,10 @@ module.exports = function (app){
   });
 
   app.use((req, res) => {
-    res
-      .status(404)
-      .json({
-        message: `Requested route ( ${req.get("HOST")}${
-          req.originalUrl
-        } ) not found`,
-      });
+    res.status(404).json({
+      message: `Requested route ( ${req.get("HOST")}${
+        req.originalUrl
+      } ) not found`,
+    });
   });
 };

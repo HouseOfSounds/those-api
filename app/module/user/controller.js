@@ -25,9 +25,19 @@ async function login(req, res) {
 
 async function listUsers(req, res) {
   try {
-    const result = await service.listUsers(req);
+    const result = await service.listUsers();
 
     return res.status(200).json(result);
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function forgotPassword(req, res) {
+  try {
+    const response = await service.forgotPassword(req, res);
+
+    return response;
   } catch (err) {
     throw err;
   }
@@ -67,6 +77,7 @@ module.exports = {
   signup,
   login,
   listUsers,
+  forgotPassword,
   resetPassword,
   changePassword,
   verifyAccount,

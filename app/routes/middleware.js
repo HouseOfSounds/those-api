@@ -23,19 +23,7 @@ module.exports = function (app) {
       credentials: true,
     })
   );
-  // app.use(raw());
-
-  // app.use(
-  //   cors({
-  //     origin: (origin, callback) => {
-  //       if (!origin) return callback(null, true);
-
-  //       return callback(null, true);
-  //     },
-  //     credentials: true,
-  //   })
-  // );
-  // app.use(raw());
+  app.use(raw());
 
   if (process.env.NODE_ENV === "development") {
     app.use((req, res, next) => {

@@ -29,10 +29,19 @@ module.exports = {
     },
   },
 
-  resetPassword: {
+  forgotPassword: {
     body: {
       schema: Joi.object({
         email: Joi.string().email().trim().lowercase().required(),
+      }),
+    },
+  },
+
+  resetPassword: {
+    body: {
+      schema: Joi.object({
+        token: Joi.string().required(),
+        password: Joi.string().required(),
       }),
     },
   },
