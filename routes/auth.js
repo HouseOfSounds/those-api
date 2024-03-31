@@ -32,7 +32,12 @@ route.get(
   })
 );
 
-route.get("/google", passport.authenticate("google", ["profile", "email"]));
+// route.get("/google", passport.authenticate("google", ["profile", "email"]));
+
+route.get(
+  "/google",
+  passport.authenticate("google", { scope: ["email", "profile"] })
+);
 
 route.get("/logout", (req, res) => {
   req.logout();
