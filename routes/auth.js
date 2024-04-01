@@ -6,7 +6,7 @@ route.get("/login/success", (req, res) => {
   if (req.user) {
     res.status(200).json({
       error: false,
-      message: "Succesfully logged in!",
+      message: `Succesfully logged in!`,
       user: req.user,
     });
   } else {
@@ -32,16 +32,30 @@ route.get(
   })
 );
 
-// route.get("/google", passport.authenticate("google", ["profile", "email"]));
-
 route.get(
   "/google",
   passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
+// route.get("/logout", (req, res) => {
+//   req.logout();
+//   res.redirect(process.env.CLIENT_URL);
+// });
+
 route.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect(process.env.CLIENT_URL);
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+  });
+
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error destroying session:", err);
+      return next(err);
+    }
+    res.redirect(process.env.CLIENT_URL);
+  });
 });
 
 module.exports = route;

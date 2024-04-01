@@ -13,24 +13,24 @@ module.exports = function (app) {
   app.use(bodyParser.urlencoded({ extended: true }));
   //app.use(cookieParser());
 
-  // app.use(
-  //   cors({
-  //     origin: (origin, callback) => {
-  //       if (!origin) return callback(null, true);
-
-  //       return callback(null, true);
-  //     },
-  //     credentials: true,
-  //   })
-  // );
-
   app.use(
     cors({
-      origin: "http://localhost:3000",
-      methods: "GET,POST,PUT,PATCH,DELETE",
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+
+        return callback(null, true);
+      },
       credentials: true,
     })
   );
+
+  // app.use(
+  //   cors({
+  //     origin: "http://localhost:3000",
+  //     methods: "GET,POST,PUT,PATCH,DELETE",
+  //     credentials: true,
+  //   })
+  // );
 
   app.use(raw());
 

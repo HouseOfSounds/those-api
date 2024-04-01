@@ -3,6 +3,7 @@ const express = require("express");
 // const cors = require("cors");
 const passport = require("passport");
 const cookeSession = require("cookie-session");
+const session = require("express-session");
 const passportSetup = require("./passport");
 const authRoute = require("./routes/auth");
 
@@ -20,11 +21,20 @@ const version = "/v1";
 app.use(version, user);
 // ==========================================
 
+// app.use(
+//   cookeSession({
+//     name: "session",
+//     keys: ["codeweaver"],
+//     maxAge: 24 * 60 * 60 * 100,
+//   })
+// );
+
 app.use(
-  cookeSession({
-    name: "session",
-    keys: ["codeweaver"],
-    maxAge: 24 * 60 * 60 * 100,
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
   })
 );
 
