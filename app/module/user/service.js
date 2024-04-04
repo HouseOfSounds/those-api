@@ -60,12 +60,10 @@ const signup = async (body) => {
       newUser.password = await bcrypt.hash(password, salt);
 
       await newUser.save();
+      const data = await setAuth(newUser);
 
       //=============================
-      const user = await User.findOne({ email });
-      const verifyToken = jwt.sign({ userId: user._id }, secretKey, {
-        expiresIn: "1h",
-      });
+      const verifyToken = data.userToken.token;
 
       const theLink = `https://beatlabapi.vercel.app/v1/user/verify-account?token=${verifyToken}`;
       const mailSubject = "Account Creation";
@@ -75,7 +73,7 @@ const signup = async (body) => {
       //===============================
 
       return {
-        data: await setAuth(newUser),
+        data,
         message: `User Created Successfully`,
       };
     }
@@ -194,7 +192,7 @@ const resetPassword = async (req, res) => {
 
     return res.json({
       data: user,
-      message: "Password updated successfully",
+      message: "New password set successfully",
     });
   } catch (error) {
     return res.status(500).json({ error });
@@ -236,7 +234,7 @@ const changePassword = async (req, res) => {
     return res.json({
       success,
       data: user,
-      message: "Password updated successfully",
+      message: "Password changed successfully",
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -283,13 +281,15 @@ const verifyAccount = async (req, res) => {
   try {
     const { token } = req.query;
 
-    const decodedToken = jwt.verify(token, secretKey);
+    const decoded = await decodeJwt(token, process.env.APP_KEY);
 
-    if (!decodedToken || !decodedToken.userId) {
+    if (!decoded || !id) {
       throw new Error("Invalid token");
     }
 
-    const user = await User.findById(decodedToken.userId);
+    const { id } = decoded;
+
+    const user = await User.findById(id);
 
     if (!user) {
       throw new Error("User not found");
