@@ -283,7 +283,7 @@ const verifyAccount = async (req, res) => {
 
     const decoded = await decodeJwt(token, process.env.APP_KEY);
 
-    if (!decoded || !id) {
+    if (!decoded) {
       throw new Error("Invalid token");
     }
 
