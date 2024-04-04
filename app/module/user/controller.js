@@ -73,6 +73,16 @@ const verifyAccount = async (req, res) => {
   }
 };
 
+async function updateProfile(req, res) {
+  try {
+    const response = await service.updateProfile(req, res);
+
+    return res.status(200).json({ response });
+  } catch (err) {
+    throw err;
+  }
+}
+
 module.exports = {
   signup,
   login,
@@ -80,5 +90,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   changePassword,
+  updateProfile,
   verifyAccount,
 };

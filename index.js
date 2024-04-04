@@ -8,7 +8,7 @@ const passportSetup = require("./passport");
 const authRoute = require("./routes/auth");
 
 const middlewares = require("./app/routes/middleware");
-const routes = require("./app/routes");
+// const routes = require("./app/routes");
 const connectDB = require("./app/config/db");
 
 const app = express();
@@ -21,6 +21,7 @@ const version = "/v1";
 app.use(version, user);
 // ==========================================
 
+//----conflicting with session below
 // app.use(
 //   cookeSession({
 //     name: "session",
@@ -52,7 +53,16 @@ app.use(passport.session());
 //   })
 // );
 
+// google auth with passport
 app.use(`${version}/auth`, authRoute);
+
+// google oAuth
+const oauth = require("./routes/oauth");
+app.use(`${version}/oauth`, oauth);
+
+// google oAuth request
+const oauthReq = require("./routes/request");
+app.use(`${version}/oauth/request`, oauthReq);
 
 (async () => {
   try {

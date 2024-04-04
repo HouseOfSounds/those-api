@@ -27,8 +27,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-let changeToken;
-
 async function setAuth(userObj) {
   const id = userObj._id;
   userObj.id = id;
@@ -49,7 +47,6 @@ async function setAuth(userObj) {
 
 const signup = async (body) => {
   try {
-    // const { email, password, category, plan, fullname } = body;
     const { email, password } = body;
 
     const userExist = await User.findOne({ email });
@@ -58,12 +55,9 @@ const signup = async (body) => {
       throw new ExistsError(`${email} already Exist`);
     } else {
       let newUser = new User();
-      // newUser.fullname = fullname;
-      // newUser.category = category.toUpperCase();
       newUser.email = email.trim();
       const salt = await bcrypt.genSalt(10);
       newUser.password = await bcrypt.hash(password, salt);
-      // newUser.plan = plan.toUpperCase();
 
       await newUser.save();
 
@@ -73,8 +67,7 @@ const signup = async (body) => {
         expiresIn: "1h",
       });
 
-      // const theLink = `https://beatlab.vercel.app/verify-account?token=${verifyToken}`;
-      const theLink = `https://beatlabapi.vercel.app/v1/verify-account?token=${verifyToken}`;
+      const theLink = `https://beatlabapi.vercel.app/v1/user/verify-account?token=${verifyToken}`;
       const mailSubject = "Account Creation";
       const mailBody = `Your account has been created successfully. \nClick the following link to verify your email: ${theLink}`;
 
@@ -109,6 +102,7 @@ async function login(body) {
     return {
       success,
       data: await setAuth(user),
+      message: "Successfully logged in",
     };
   } catch (err) {
     // throw err;
@@ -143,7 +137,15 @@ const forgotPassword = async (req, res) => {
       expiresIn: "1h",
     });
 
-    const theLink = `https://beatlab.vercel.app/forgot-password?token=${resetToken}`;
+    // Link to front end form for resetting password
+    const theLink = `https://beatlab.vercel.app/reset-password?token=${resetToken}`;
+    /* Retrieve token from link in email, create form 
+      with password and confirmPassword and post to 
+      `https://beatlabapi.vercel.app/v1/user/reset-password?token=${resetToken}` 
+      with password and confirmPassword as body params
+    */
+
+    // const theLink = `https://beatlabapi.vercel.app/v1/user/reset-password?token=${resetToken}`;
     const mailSubject = "BeatLab Password Reset";
     const mailBody = `Click the following link to reset your password: ${theLink}`;
 
@@ -159,15 +161,19 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { token, password } = req.body;
+    const { token } = req.query;
+    const { password, confirmPassword } = req.body;
 
-    const decodedToken = jwt.verify(token, secretKey);
+    if (password !== confirmPassword)
+      return res.status(200).json({ message: "Password does not match !" });
 
-    if (!decodedToken || !decodedToken.userId) {
+    const { userId } = jwt.verify(token, secretKey);
+
+    if (!userId) {
       throw "Invalid token !";
     }
 
-    const user = await User.findById(decodedToken.userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       throw "User does not exist !";
@@ -191,7 +197,7 @@ const resetPassword = async (req, res) => {
       message: "Password updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 };
 
@@ -234,6 +240,42 @@ const changePassword = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    const { email, password, category, plan, fullname } = req.body;
+    const token = req.headers["authorization"];
+    const { id } = await decodeJwt(token, process.env.APP_KEY);
+
+    const user = await User.findById(id);
+
+    if (user) {
+      user.fullname = fullname;
+      user.category = category.toUpperCase();
+      user.email = email.trim();
+
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+      }
+
+      user.plan = plan.toUpperCase();
+
+      await user.save();
+
+      return {
+        data: await setAuth(user),
+        message: `User Profile Updated Successfully`,
+      };
+    } else {
+      return {
+        message: `Unable to update profile`,
+      };
+    }
+  } catch (err) {
+    throw err;
   }
 };
 
@@ -292,5 +334,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   changePassword,
+  updateProfile,
   verifyAccount,
 };
