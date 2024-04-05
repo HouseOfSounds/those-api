@@ -305,7 +305,7 @@ const verifyAccount = async (req, res) => {
     const mailBody = `Your account [${email}], has been successfully verified.`;
 
     await sendEMail(senderMail, email, mailSubject, mailBody);
-
+    //
     res.status(200).json({
       data: user,
       message: "Account verification successful.",
