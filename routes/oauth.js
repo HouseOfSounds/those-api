@@ -51,48 +51,47 @@ route.get("/", async (req, res, next) => {
 
     const { email, name, given_name, family_name, picture } = result;
     const theUser = await User.findOne({ email });
-    let response;
+    // let response;
     if (!theUser) {
       const userData = {
         email,
         password: "p@ssword123",
       };
 
-      axios
+      await axios
         .post(`${process.env.CLIENT_URL}/user/signup`, userData)
         .then((response) => {
           console.log("User signed up successfully:", response.data);
           // res.send(response.data);
           //redirect to dashboard on FE
-          // res.redirect(process.env.CLIENT_URL);
+          res.redirect(process.env.CLIENT_URL);
         })
         .catch((error) => {
           console.error("Error signing up user:", error.response.data);
-          res.send(error.response.data);
+          // res.send(error.response.data);
           // res.send("sign up error", error.response.data);
           //redirect to home page on FE
-          // res.redirect(process.env.CLIENT_URL);
+          res.redirect(process.env.CLIENT_URL);
         });
     } else {
-      axios
+      await axios
         .post(`${process.env.CLIENT_URL}/user/autologin`, { email })
         .then((response) => {
           console.log("User logged in successfully:", response.data);
-          res.send(response.data);
+          // res.send(response.data);
           //redirect to dashboard on FE
-          // res.redirect(`${process.env.CLIENT_URL}/frame/profile-admin`);
+          res.redirect(`${process.env.CLIENT_URL}/frame/profile-admin`);
         })
         .catch((error) => {
           console.error("Error signing up user:", error.response.data);
-          res.send(error.response.data);
+          // res.send(error.response.data);
           // res.send("sign up error", error.response.data);
           //redirect to home page on FE
-          // res.redirect(process.env.CLIENT_URL);
+          res.redirect(process.env.CLIENT_URL);
         });
     }
 
     // res.send("Authorization completed.");
-    // return res.json({ response: response.data });
   } catch (err) {
     throw err;
     // console.log({ error: "Google Sign Up Error", err });
