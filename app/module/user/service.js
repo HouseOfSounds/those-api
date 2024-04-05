@@ -108,6 +108,26 @@ async function login(body) {
   }
 }
 
+async function autoLogin(body) {
+  try {
+    const { email } = body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new AuthenticationError(` User does not exist !`);
+    }
+
+    return {
+      success,
+      data: await setAuth(user),
+      message: "Successfully logged in",
+    };
+  } catch (err) {
+    return { error: { message: "Invalid login !", err } };
+  }
+}
+
 const listUsers = async () => {
   try {
     const users = await User.find();
@@ -305,7 +325,7 @@ const verifyAccount = async (req, res) => {
     const mailBody = `Your account [${email}], has been successfully verified.`;
 
     await sendEMail(senderMail, email, mailSubject, mailBody);
-    //
+
     res.status(200).json({
       data: user,
       message: "Account verification successful.",
@@ -330,6 +350,7 @@ const sendEMail = async (from, to, subject, text) => {
 module.exports = {
   signup,
   login,
+  autoLogin,
   listUsers,
   forgotPassword,
   resetPassword,

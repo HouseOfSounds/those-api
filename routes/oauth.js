@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 // const { google } = require("googleapis");
 const axios = require("axios");
 
+const { User } = require("../app/module/user/model");
+
 dotenv.config();
 
 const { OAuth2Client } = require("google-auth-library");
@@ -16,6 +18,7 @@ const getUserData = async (access_token) => {
   return data;
 };
 
+// signup
 route.get("/", async (req, res, next) => {
   const code = req.query.code;
 
@@ -38,38 +41,106 @@ route.get("/", async (req, res, next) => {
     // const { data } = await oauth2.userinfo.get();
     // console.log("User email:", data.email);
     //=============================
-    console.log("Tokens Acquired");
 
+    // console.log("Tokens Acquired");
     const user = oAuth2Client.credentials;
-    console.log("credentials", user);
+    // console.log("credentials", user);
 
     const result = await getUserData(user.access_token);
+    // console.log(result);
 
-    // const { email, name, given_name, family_name, picture } = result;
-    const userData = {
-      email: result.email,
-      password: "p@ssword123",
-    };
+    const { email, name, given_name, family_name, picture } = result;
+    const theUser = await User.findOne({ email });
+    let response;
+    if (!theUser) {
+      const userData = {
+        email,
+        password: "p@ssword123",
+      };
 
-    axios
-      .post(`${process.env.CLIENT_URL}/user/signup`, userData)
-      .then((response) => {
-        console.log("User signed up successfully:", response.data);
-        // res.send(response.data);
-        res.send("sign up successful");
-        //redirect to dashboard on FE
-      })
-      .catch((error) => {
-        console.error("Error signing up user:", error.response.data);
-        // res.send(error.response.data);
-        res.send("sign up error");
-        //redirect to home page on FE
-      });
+      axios
+        .post(`${process.env.CLIENT_URL}/user/signup`, userData)
+        .then((response) => {
+          console.log("User signed up successfully:", response.data);
+          // res.send(response.data);
+          //redirect to dashboard on FE
+          res.redirect(process.env.CLIENT_URL);
+        })
+        .catch((error) => {
+          console.error("Error signing up user:", error.response.data);
+          // res.send(error.response.data);
+          // res.send("sign up error", error.response.data);
+          //redirect to home page on FE
+          res.redirect(process.env.CLIENT_URL);
+        });
+    } else {
+      axios
+        .post(`${process.env.CLIENT_URL}/user/autologin`, { email })
+        .then((response) => {
+          console.log("User logged in successfully:", response.data);
+          // res.send(response.data);
+          //redirect to dashboard on FE
+          res.redirect(`${process.env.CLIENT_URL}/frame/profile-admin`);
+        })
+        .catch((error) => {
+          console.error("Error signing up user:", error.response.data);
+          // res.send(error.response.data);
+          // res.send("sign up error", error.response.data);
+          //redirect to home page on FE
+          res.redirect(process.env.CLIENT_URL);
+        });
+    }
 
     // res.send("Authorization completed.");
+    // return res.json({ response: response.data });
   } catch (err) {
-    console.log({ error: "Google Sign Up Error", err });
+    throw err;
+    // console.log({ error: "Google Sign Up Error", err });
   }
 });
+
+// sign in
+// route.get("/signin", async (req, res, next) => {
+//   const code = req.query.code;
+
+//   try {
+//     const oAuth2Client = new OAuth2Client(
+//       process.env.CLIENT_ID,
+//       process.env.CLIENT_SECRET,
+//       process.env.REDIRECT_URL
+//     );
+
+//     const tokc = await oAuth2Client.getToken(code);
+//     await oAuth2Client.setCredentials(tokc.tokens);
+
+//     const user = oAuth2Client.credentials;
+
+//     const result = await getUserData(user.access_token);
+
+//     const userData = {
+//       email: result.email,
+//       password: "p@ssword123",
+//     };
+
+//     axios
+//       .post(`${process.env.CLIENT_URL}/user/login`, userData)
+//       .then((response) => {
+//         console.log("User signed up successfully:", response.data);
+//         // res.send(response.data);
+//         res.send("sign up successful");
+//         //redirect to dashboard on FE
+//       })
+//       .catch((error) => {
+//         console.error("Error signing up user:", error.response.data);
+//         // res.send(error.response.data);
+//         res.send("sign up error");
+//         //redirect to home page on FE
+//       });
+
+//     // res.send("Authorization completed.");
+//   } catch (err) {
+//     console.log({ error: "Google Sign Up Error", err });
+//   }
+// });
 
 module.exports = route;

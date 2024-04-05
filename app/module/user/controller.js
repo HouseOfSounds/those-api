@@ -23,6 +23,16 @@ async function login(req, res) {
   }
 }
 
+async function autoLogin(req, res) {
+  try {
+    const result = await service.autoLogin(req.body);
+
+    return res.status(200).json(result);
+  } catch (err) {
+    throw err;
+  }
+}
+
 async function listUsers(req, res) {
   try {
     const result = await service.listUsers();
@@ -86,6 +96,7 @@ async function updateProfile(req, res) {
 module.exports = {
   signup,
   login,
+  autoLogin,
   listUsers,
   forgotPassword,
   resetPassword,

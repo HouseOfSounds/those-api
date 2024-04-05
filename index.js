@@ -18,7 +18,7 @@ middlewares(app);
 // ==========================================
 const user = require("./app/module/user");
 const version = "/v1";
-app.use(version, user);
+app.use(version, user); //user route
 // ==========================================
 
 //----conflicting with session below
@@ -42,17 +42,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin) return callback(null, true);
-
-//       return callback(null, true);
-//     },
-//     credentials: true,
-//   })
-// );
-
 // google auth with passport
 app.use(`${version}/auth`, authRoute);
 
@@ -63,6 +52,11 @@ app.use(`${version}/oauth`, oauth);
 // google oAuth request
 const oauthReq = require("./routes/request");
 app.use(`${version}/oauth/request`, oauthReq);
+
+// ========== Add Other Routes from here on
+const notes = require("./routes/notes");
+app.use(version, notes);
+// ==========   End of Routes   ==========
 
 (async () => {
   try {

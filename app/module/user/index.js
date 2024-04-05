@@ -42,4 +42,6 @@ route.patch(
   controller.updateProfile
 );
 
+route.post("/user/autologin", controller.autoLogin);
+
 module.exports = route;
