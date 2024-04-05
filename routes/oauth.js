@@ -59,7 +59,7 @@ route.get("/", async (req, res, next) => {
       };
 
       await axios
-        .post(`${process.env.CLIENT_URL}/user/signup`, userData)
+        .post(`${process.env.API_URL}/user/signup`, userData)
         .then((response) => {
           console.log("User signed up successfully:", response.data);
           // res.send(response.data);
@@ -75,7 +75,7 @@ route.get("/", async (req, res, next) => {
         });
     } else {
       await axios
-        .post(`${process.env.CLIENT_URL}/user/autologin`, { email })
+        .post(`${process.env.API_URL}/user/autologin`, { email })
         .then((response) => {
           console.log("User logged in successfully:", response.data);
           // res.send(response.data);
