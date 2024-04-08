@@ -6,7 +6,8 @@ dotenv.config();
 const { OAuth2Client } = require("google-auth-library");
 
 route.get("/", async (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  // res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "https://beatlab.vercel.app");
   res.header("Referrer-Policy", "no-referrer-when-downgrade");
 
   const oAuth2Client = new OAuth2Client(
@@ -28,6 +29,8 @@ route.get("/", async (req, res, next) => {
   // res.json({ url: authorizeUrl });
   //
   res.redirect(authorizeUrl);
+
+  next();
 });
 
 module.exports = route;
