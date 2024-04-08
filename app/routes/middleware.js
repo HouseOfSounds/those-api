@@ -34,12 +34,30 @@ module.exports = function (app) {
   //   })
   // );
 
+  app.use(
+    cors({
+      origin: ["http://localhost:3000", "https://beatlab.vercel.app"],
+      methods: [
+        "GET",
+        "HEAD",
+        "POST",
+        "PUT",
+        "DELETE",
+        "CONNECT",
+        "OPTIONS",
+        "TRACE",
+        "PATCH",
+      ],
+    })
+  );
+
   // app.use(cors());
 
   // app.use((req, res, next) => {
   //   res.header("Access-Control-Allow-Origin", "*");
   //   next();
   // });
+
   // app.use(raw());
 
   if (process.env.NODE_ENV === "development") {

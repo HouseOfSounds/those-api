@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
+// const cors = require("cors");
 const passport = require("passport");
 const cookeSession = require("cookie-session");
 const session = require("express-session");
@@ -41,13 +41,6 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-//
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "https://beatlab.vercel.app"],
-  })
-);
 
 // app.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
