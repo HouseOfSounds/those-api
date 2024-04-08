@@ -42,12 +42,17 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(cors());
+//
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://beatlab.vercel.app"],
+  })
+);
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   next();
+// });
 
 // google auth with passport
 app.use(`${version}/auth`, authRoute);
