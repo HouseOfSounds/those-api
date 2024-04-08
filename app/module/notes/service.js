@@ -71,14 +71,14 @@ const listNotes = async (req, res) => {
     const totalNotes = await Note.countDocuments();
     const totalPages = Math.ceil(totalNotes / pageSize);
 
-    res.status(200).json({
+    return {
       notes,
       totalPages,
       currentPage: page,
       pageSize,
       totalNotes,
       message: `Notes Listed successfully`,
-    });
+    };
   } catch (error) {
     console.error("Error listing notes:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -86,7 +86,7 @@ const listNotes = async (req, res) => {
 };
 
 const editNote = async (req, res) => {
-  console.log("==== Editting Note ====");
+  console.log("==== Editing Note ====");
   const token = req.headers.authorization.split(" ")[1];
 
   const { id } = jwt.verify(token, secretKey);

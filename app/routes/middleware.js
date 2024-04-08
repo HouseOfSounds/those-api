@@ -13,18 +13,18 @@ module.exports = function (app) {
   app.use(bodyParser.urlencoded({ extended: true }));
   //app.use(cookieParser());
 
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-        if (origin.includes("http://localhost:3000"))
-          return callback(null, true);
+  // app.use(
+  //   cors({
+  //     origin: (origin, callback) => {
+  //       if (!origin) return callback(null, true);
+  //       if (origin.includes("http://localhost:3000"))
+  //         return callback(null, true);
 
-        return callback(null, true);
-      },
-      credentials: true,
-    })
-  );
+  //       return callback(null, true);
+  //     },
+  //     credentials: true,
+  //   })
+  // );
 
   // app.use(
   //   cors({
@@ -34,7 +34,9 @@ module.exports = function (app) {
   //   })
   // );
 
-  app.use(raw());
+  app.use(cors());
+
+  // app.use(raw());
 
   if (process.env.NODE_ENV === "development") {
     app.use((req, res, next) => {

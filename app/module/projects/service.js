@@ -1,11 +1,12 @@
 const { Project } = require("./project");
+const jwt = require("jsonwebtoken");
 
-const { decodeJwt } = require("iyasunday");
+const secretKey = process.env.JWT_SECRET;
 
 const createProject = async (req, res) => {
   console.log("==== Creating Project ====");
-  const token = req.headers["authorization"];
-  const { id } = await decodeJwt(token, process.env.APP_KEY);
+  const token = req.headers.authorization.split(" ")[1];
+  const { id } = jwt.verify(token, secretKey);
 
   try {
     const { title, description } = req.body;
@@ -29,8 +30,9 @@ const createProject = async (req, res) => {
 
 const deleteProject = async (req, res) => {
   console.log("==== Deleting Project ====");
-  const token = req.headers["authorization"];
-  const { id } = await decodeJwt(token, process.env.APP_KEY);
+  const token = req.headers.authorization.split(" ")[1];
+
+  const { id } = jwt.verify(token, secretKey);
 
   try {
     const { projectid } = req.params;
@@ -83,8 +85,9 @@ const listProjects = async (req, res) => {
 
 const editProject = async (req, res) => {
   console.log("==== Editing Project ====");
-  const token = req.headers["authorization"];
-  const { id } = await decodeJwt(token, process.env.APP_KEY);
+  const token = req.headers.authorization.split(" ")[1];
+
+  const { id } = jwt.verify(token, secretKey);
 
   try {
     const { projectid } = req.params;
