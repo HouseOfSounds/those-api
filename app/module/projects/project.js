@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
 
-const noteSchema = new mongoose.Schema({
-  noteuid: {
+const projectSchema = new mongoose.Schema({
+  projectuid: {
     type: String,
     required: true,
   },
 
-  notetitle: {
+  title: {
     type: String,
     required: true,
   },
 
-  notebody: {
+  description: {
     type: String,
     required: true,
   },
@@ -28,8 +28,8 @@ const noteSchema = new mongoose.Schema({
   },
 });
 
-const Note = mongoose.model("note", noteSchema);
+const Project = mongoose.model("project", noteSchema);
 
 module.exports = {
-  Note,
+  Project,
 };

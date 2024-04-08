@@ -18,7 +18,7 @@ const getUserData = async (access_token) => {
   return data;
 };
 
-// signup
+// signin and signup
 route.get("/", async (req, res, next) => {
   const code = req.query.code;
 
@@ -58,6 +58,7 @@ route.get("/", async (req, res, next) => {
         password: "p@ssword123",
       };
 
+      //signup new user
       await axios
         .post(`${process.env.API_URL}/user/signup`, userData)
         .then((response) => {
@@ -74,6 +75,7 @@ route.get("/", async (req, res, next) => {
           res.redirect(process.env.CLIENT_URL);
         });
     } else {
+      //sign in user
       await axios
         .post(`${process.env.API_URL}/user/autologin`, { email })
         .then((response) => {

@@ -1,6 +1,16 @@
 const Joi = require("joi");
 
 module.exports = {
+  Note: {
+    body: {
+      schema: Joi.object({
+        noteuid: Joi.string(),
+        notetitle: Joi.string().min(3).max(50).required(),
+        notebody: Joi.string().min(10).max(300).required(),
+      }),
+    },
+  },
+
   contactForm: {
     body: {
       schema: Joi.object({

@@ -17,6 +17,8 @@ module.exports = function (app) {
     cors({
       origin: (origin, callback) => {
         if (!origin) return callback(null, true);
+        if (origin.includes("http://localhost:3000"))
+          return callback(null, true);
 
         return callback(null, true);
       },

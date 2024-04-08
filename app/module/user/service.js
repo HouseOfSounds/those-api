@@ -1,10 +1,3 @@
-const {
-  success,
-  encodeJwt,
-  decodeJwt,
-  ExistsError,
-  AuthenticationError,
-} = require("iyasunday");
 const bcrypt = require("bcrypt");
 const { User } = require("./model");
 const nodemailer = require("nodemailer");
@@ -12,6 +5,9 @@ const jwt = require("jsonwebtoken");
 const { ACCOUNT_STATUS } = require("../../utils/constant");
 
 const secretKey = process.env.JWT_SECRET;
+const duration = process.env.JWT_TOKEN_VALIDITY;
+// const secreteKey = process.env.APP_KEY;
+
 const senderMail = process.env.SENDER_EMAIL;
 const senderPassword = process.env.SENDER_PASSWORD;
 const host = process.env.MAIL_HOST;
@@ -31,11 +27,22 @@ async function setAuth(userObj) {
   const id = userObj._id;
   userObj.id = id;
 
-  userObj.token = await encodeJwt({
-    data: { id, createdAt: new Date() },
-    secreteKey: process.env.APP_KEY,
-    duration: process.env.JWT_TOKEN_VALIDITY,
-  });
+  // userObj.token = await encodeJwt({
+  //   data: { id, createdAt: new Date() },
+  //   secreteKey: process.env.APP_KEY,
+  //   duration: process.env.JWT_TOKEN_VALIDITY,
+  // });
+
+  userObj.token = jwt.sign(
+    {
+      id,
+      createdAt: new Date(),
+    },
+    secretKey,
+    {
+      expiresIn: duration,
+    }
+  );
 
   const userToken = await User.findByIdAndUpdate(
     userObj._id,
@@ -52,7 +59,7 @@ const signup = async (body) => {
     const userExist = await User.findOne({ email });
 
     if (userExist) {
-      throw new ExistsError(`${email} already Exist`);
+      return { message: `${email} already exists !` };
     } else {
       let newUser = new User();
       newUser.email = email.trim();
@@ -87,23 +94,20 @@ async function login(body) {
     const { email, password } = body;
 
     const user = await User.findOne({ email }).select("+password");
-
     if (!user) {
-      throw new AuthenticationError(` User does not exist !`);
+      return { error: `User does not exist !` };
     }
-    const isMatch = await bcrypt.compare(password, user.password);
 
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new AuthenticationError(` Password is incorrect !`);
+      return { error: { message: ` Password is incorrect !` } };
     }
 
     return {
-      success,
       data: await setAuth(user),
       message: "Successfully logged in",
     };
   } catch (err) {
-    // throw err;
     return { error: { message: "Invalid login credentials !" } };
   }
 }
@@ -115,11 +119,10 @@ async function autoLogin(body) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new AuthenticationError(` User does not exist !`);
+      return { error: `User does not exist !` };
     }
 
     return {
-      success,
       data: await setAuth(user),
       message: "Successfully logged in",
     };
@@ -133,7 +136,6 @@ const listUsers = async () => {
     const users = await User.find();
 
     return {
-      success,
       data: users,
       message: `Users Listed Successfully`,
     };
@@ -158,10 +160,10 @@ const forgotPassword = async (req, res) => {
     // Link to front end form for resetting password
     const theLink = `https://beatlab.vercel.app/reset-password?token=${resetToken}`;
     /* Retrieve token from link in email, create form 
-      with password and confirmPassword and post to 
-      `https://beatlabapi.vercel.app/v1/user/reset-password?token=${resetToken}` 
-      with password and confirmPassword as body params
-    */
+        with password and confirmPassword and post to 
+        `https://beatlabapi.vercel.app/v1/user/reset-password?token=${resetToken}` 
+        with password and confirmPassword as body params
+      */
 
     // const theLink = `https://beatlabapi.vercel.app/v1/user/reset-password?token=${resetToken}`;
     const mailSubject = "BeatLab Password Reset";
@@ -188,7 +190,7 @@ const resetPassword = async (req, res) => {
     const { userId } = jwt.verify(token, secretKey);
 
     if (!userId) {
-      throw "Invalid token !";
+      return { error: { message: "Invalid token !", err } };
     }
 
     const user = await User.findById(userId);
@@ -221,13 +223,15 @@ const resetPassword = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const token = req.headers["authorization"];
+    token = req.headers.authorization.split(" ")[1];
+
+    // const token = req.headers["authorization"];
     const { password, confirmPassword } = req.body;
 
     if (password !== confirmPassword)
       return res.status(200).json({ message: "Password does not match !" });
 
-    const decoded = await decodeJwt(token, process.env.APP_KEY);
+    const decoded = jwt.verify(token, secretKey);
 
     if (!decoded) {
       return res.status(403).json({ error: "Invalid authorization token !" });
@@ -252,7 +256,6 @@ const changePassword = async (req, res) => {
     await sendEMail(senderMail, email, mailSubject, mailBody);
 
     return res.json({
-      success,
       data: user,
       message: "Password changed successfully",
     });
@@ -264,8 +267,10 @@ const changePassword = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { email, password, category, plan, fullname } = req.body;
-    const token = req.headers["authorization"];
-    const { id } = await decodeJwt(token, process.env.APP_KEY);
+
+    token = req.headers.authorization.split(" ")[1];
+
+    const { id } = jwt.verify(token, secretKey);
 
     const user = await User.findById(id);
 
@@ -301,7 +306,7 @@ const verifyAccount = async (req, res) => {
   try {
     const { token } = req.query;
 
-    const decoded = await decodeJwt(token, process.env.APP_KEY);
+    const decoded = jwt.verify(token, secretKey);
 
     if (!decoded) {
       throw new Error("Invalid token");
