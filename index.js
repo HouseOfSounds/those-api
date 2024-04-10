@@ -63,6 +63,9 @@ app.use(version, projects);
 
 const organisations = require("./routes/organisations");
 app.use(version, organisations);
+
+const messages = require("./routes/messages");
+app.use(version, messages);
 // ==========   End of Routes   ==========
 
 (async () => {
