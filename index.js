@@ -4,7 +4,6 @@ const passport = require("passport");
 const cookieSession = require("cookie-session");
 const session = require("express-session");
 const passportSetup = require("./passport");
-const authRoute = require("./routes/auth");
 
 const middlewares = require("./app/routes/middleware");
 // const routes = require("./app/routes");
@@ -42,15 +41,18 @@ app.use(version, user); //user route
 // ==========================================
 
 // google auth with passport
+const authRoute = require("./routes/auth");
 app.use(`${version}/auth`, authRoute);
 
-// google oAuth
-const oauth = require("./routes/oauth");
-app.use(`${version}/oauth`, oauth);
+// // google oAuth
+// const oauth = require("./routes/oauth");
+// app.use(`${version}/oauth`, oauth);
 
+//=============================================
 // google oAuth request
 // const oauthReq = require("./routes/request");
 // app.use(`${version}/oauth/request`, oauthReq);
+//=============================================
 
 // ========== Add Other Routes from here on
 const notes = require("./routes/notes");

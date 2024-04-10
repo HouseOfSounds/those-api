@@ -29,13 +29,13 @@ route.get("/login/success", async (req, res) => {
       await axios
         .post(`${process.env.API_URL}/user/signup`, userData)
         .then(async (response) => {
-          console.log("User signed up successfully:", response.data);
+          console.log("User signed up successfully:", email);
 
           // sign user in
           await axios
             .post(`${process.env.API_URL}/user/autologin`, { email })
             .then((response) => {
-              console.log("new sign in:", response.data);
+              console.log("new sign in:", email);
               //redirect to dashboard on FE
               res.redirect(`${process.env.CLIENT_URL}/frame/profile-admin`);
             });
@@ -50,7 +50,7 @@ route.get("/login/success", async (req, res) => {
       await axios
         .post(`${process.env.API_URL}/user/autologin`, { email })
         .then((response) => {
-          console.log("old sign in:", response.data);
+          console.log("old sign in:", email);
           //redirect to dashboard on FE
           res.redirect(`${process.env.CLIENT_URL}/frame/profile-admin`);
         })
@@ -78,11 +78,14 @@ route.get("/login/failed", (req, res) => {
 route.get(
   "/google/callback",
   passport.authenticate("google", {
-    // successRedirect: process.env.CLIENT_URL,
     successRedirect: "/v1/auth/login/success",
     failureRedirect: "/login/failed",
   })
 );
+
+//=================================
+
+//=================================
 
 route.get(
   "/google",
@@ -93,21 +96,5 @@ route.get("/logout", (req, res) => {
   req.logout();
   res.redirect(process.env.CLIENT_URL);
 });
-
-// route.get("/logout", (req, res) => {
-//   req.logout((err) => {
-//     if (err) {
-//       return next(err);
-//     }
-//   });
-
-//   req.session.destroy((err) => {
-//     if (err) {
-//       console.error("Error destroying session:", err);
-//       return next(err);
-//     }
-//     res.redirect(process.env.CLIENT_URL);
-//   });
-// });
 
 module.exports = route;
