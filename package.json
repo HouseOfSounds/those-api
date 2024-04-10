@@ -32,6 +32,7 @@
     "mongoose": "^7.5.3",
     "nodemailer": "^6.9.12",
     "nodemon": "^2.0.15",
+    "npm": "^10.5.1",
     "passport": "^0.5.3",
     "passport-google-oauth20": "^2.0.0",
     "uuid": "^8.3.2"

@@ -16,11 +16,11 @@ const createNote = async (req, res) => {
     const note = new Note({
       notetitle,
       notebody,
-      noteuid: id,
+      noteUserId: id,
     });
 
     await note.save();
-
+    console.log(note);
     return {
       data: note,
       message: `Note Created Successfully`,
@@ -38,7 +38,7 @@ const deleteNote = async (req, res) => {
 
   try {
     const { noteid } = req.params;
-    const filter = { _id: noteid, noteuid: id };
+    const filter = { _id: noteid, noteUserId: id };
 
     const response = await Note.deleteOne(filter);
     const { deletedCount } = response;
@@ -60,15 +60,19 @@ const deleteNote = async (req, res) => {
 
 const listNotes = async (req, res) => {
   console.log("==== List Notes ====");
+  const token = req.headers.authorization.split(" ")[1];
+  const { id } = jwt.verify(token, secretKey);
 
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     const skip = (page - 1) * pageSize;
 
-    const notes = await Note.find().skip(skip).limit(pageSize);
+    const notes = await Note.find({ noteUserId: id })
+      .skip(skip)
+      .limit(pageSize);
 
-    const totalNotes = await Note.countDocuments();
+    const totalNotes = await Note.countDocuments({ noteUserId: id });
     const totalPages = Math.ceil(totalNotes / pageSize);
 
     return {
@@ -93,7 +97,7 @@ const editNote = async (req, res) => {
 
   try {
     const { noteid } = req.params;
-    const filter = { _id: noteid, noteuid: id };
+    const filter = { _id: noteid, noteUserId: id };
 
     const note = await Note.findOne(filter);
     if (!note) {

@@ -1,18 +1,43 @@
 const mongoose = require("mongoose");
 
 const projectSchema = new mongoose.Schema({
-  projectuid: {
+  projectUserId: {
     type: String,
     required: true,
   },
 
-  title: {
+  name: {
+    type: String,
+    required: true,
+  },
+
+  artist: {
+    type: String,
+    required: true,
+  },
+
+  type: {
     type: String,
     required: true,
   },
 
   description: {
     type: String,
+    required: true,
+  },
+
+  startDate: {
+    type: Date,
+    required: true,
+  },
+
+  endDate: {
+    type: Date,
+    required: true,
+  },
+
+  budget: {
+    type: Number,
     required: true,
   },
 
@@ -28,7 +53,7 @@ const projectSchema = new mongoose.Schema({
   },
 });
 
-const Project = mongoose.model("project", noteSchema);
+const Project = mongoose.model("project", projectSchema);
 
 module.exports = {
   Project,

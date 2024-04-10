@@ -9,13 +9,8 @@ const createProject = async (req, res) => {
   const { id } = jwt.verify(token, secretKey);
 
   try {
-    const { title, description } = req.body;
-
-    const project = new Project({
-      title,
-      description,
-      projectuid: id,
-    });
+    const proBody = { projectUserId: id, ...req.body };
+    const project = new Project(proBody);
 
     await project.save();
 
@@ -36,7 +31,7 @@ const deleteProject = async (req, res) => {
 
   try {
     const { projectid } = req.params;
-    const filter = { _id: projectid, projectuid: id };
+    const filter = { _id: projectid, projectUserId: id };
 
     const response = await Project.deleteOne(filter);
     const { deletedCount } = response;
@@ -58,25 +53,29 @@ const deleteProject = async (req, res) => {
 
 const listProjects = async (req, res) => {
   console.log("==== List Projects ====");
+  const token = req.headers.authorization.split(" ")[1];
+  const { id } = jwt.verify(token, secretKey);
 
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     const skip = (page - 1) * pageSize;
 
-    const projects = await Project.find().skip(skip).limit(pageSize);
+    const projects = await Project.find({ projectUserId: id })
+      .skip(skip)
+      .limit(pageSize);
 
-    const total = await Project.countDocuments();
+    const total = await Project.countDocuments({ projectUserId: id });
     const pages = Math.ceil(total / pageSize);
 
-    res.status(200).json({
+    return {
       projects,
       pages,
       currentPage: page,
       pageSize,
       total,
       message: `Projects Listed successfully`,
-    });
+    };
   } catch (error) {
     console.error("Error listing projects:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -91,16 +90,17 @@ const editProject = async (req, res) => {
 
   try {
     const { projectid } = req.params;
-    const filter = { _id: projectid, projectuid: id };
+    const filter = { _id: projectid, projectUserId: id };
 
     const project = await Project.findOne(filter);
     if (!project) {
       return {
-        message: `${projectid} does not exist`,
+        message: `Project ${projectid} does not exist`,
       };
     } else {
-      const { title, description } = req.body;
-      Object.assign(project, { title, description });
+      const proBody = { ...req.body };
+
+      Object.assign(project, proBody);
 
       await project.save();
 

@@ -5,7 +5,7 @@ const {
   errorMessage,
 } = require("iyasunday");
 
-const {User} = require("../module/user/model");
+const { User } = require("../module/user/model");
 const Jwt = require("jsonwebtoken");
 
 module.exports = function guard(can = undefined) {
@@ -35,4 +35,4 @@ module.exports = function guard(can = undefined) {
       return res.status(err.httpStatusCode || 500).json(errorMessage(err));
     }
   };
-}
+};

@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
     default: ACCOUNT_STATUS.UNVERIFIED,
   },
 
+  organisations: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "organisation" },
+  ],
+
   token: {
     type: String,
   },

@@ -12,6 +12,19 @@ const middlewares = require("./app/routes/middleware");
 const connectDB = require("./app/config/db");
 
 const app = express();
+
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 middlewares(app);
 // routes(app);
 
@@ -20,32 +33,6 @@ const user = require("./app/module/user");
 const version = "/v1";
 app.use(version, user); //user route
 // ==========================================
-
-//----conflicting with session below
-// app.use(
-//   cookeSession({
-//     name: "session",
-//     keys: ["codeweaver"],
-//     maxAge: 24 * 60 * 60 * 100,
-//   })
-// );
-
-// app.use(
-//   session({
-//     secret: process.env.JWT_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: { secure: false },
-//   })
-// );
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   next();
-// });
 
 // google auth with passport
 app.use(`${version}/auth`, authRoute);
@@ -61,6 +48,12 @@ app.use(`${version}/oauth/request`, oauthReq);
 // ========== Add Other Routes from here on
 const notes = require("./routes/notes");
 app.use(version, notes);
+
+const projects = require("./routes/projects");
+app.use(version, projects);
+
+const organisations = require("./routes/organisations");
+app.use(version, organisations);
 // ==========   End of Routes   ==========
 
 (async () => {

@@ -363,3 +363,5 @@ module.exports = {
   updateProfile,
   verifyAccount,
 };
+
+// UserModel.findByIdAndUpdate(userId, { organisations: organisationIds }, { new: true })

@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const controller = require("../app/module/notes/controller");
 const validations = require("../app/validations");
-const { joiValidator } = require("iyasunday");
+const { validator } = require("../app/validations/validator");
 const authMiddleware = require("../app/middlewares/authmiddleware");
 
 const route = Router();
@@ -15,11 +15,10 @@ route.get("/notes", (req, res) => {
   }
 });
 
-// ensure notes are created per logged in users
 route.post(
   "/notes/create-note",
   authMiddleware,
-  joiValidator(validations.Note),
+  validator(validations.Note),
   controller.createNote
 );
 
@@ -31,6 +30,11 @@ route.delete(
 
 route.get("/notes/list-notes", authMiddleware, controller.listNotes);
 
-route.put("/notes/edit-note/:noteid", authMiddleware, controller.editNote);
+route.put(
+  "/notes/edit-note/:noteid",
+  authMiddleware,
+  validator(validations.Note),
+  controller.editNote
+);
 
 module.exports = route;
