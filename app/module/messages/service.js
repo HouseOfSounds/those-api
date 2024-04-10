@@ -1,7 +1,22 @@
 const { Message } = require("./message");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 const secretKey = process.env.JWT_SECRET;
+const senderMail = process.env.SENDER_EMAIL;
+const senderPassword = process.env.SENDER_PASSWORD;
+const host = process.env.MAIL_HOST;
+const port = process.env.MAIL_PORT;
+
+const transporter = nodemailer.createTransport({
+  host,
+  port,
+  secure: true,
+  auth: {
+    user: senderMail,
+    pass: senderPassword,
+  },
+});
 
 const createMessage = async (req, res) => {
   console.log("==== Creating Message ====");
@@ -11,6 +26,12 @@ const createMessage = async (req, res) => {
     const message = new Message(msgBody);
 
     await message.save();
+
+    //=============================
+    const { email, subject } = req.body;
+
+    sendEMail(senderMail, email, subject, req.body.message);
+    //===============================
 
     return {
       data: message,
@@ -106,6 +127,17 @@ const editMessage = async (req, res) => {
     console.error("Error updating message:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+};
+
+const sendEMail = async (from, to, subject, text) => {
+  const mailOptions = {
+    from,
+    to,
+    subject,
+    text,
+  };
+
+  await transporter.sendMail(mailOptions);
 };
 
 module.exports = {
