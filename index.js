@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const passport = require("passport");
-const cookeSession = require("cookie-session");
+const cookieSession = require("cookie-session");
 const session = require("express-session");
 const passportSetup = require("./passport");
 const authRoute = require("./routes/auth");
@@ -12,12 +12,20 @@ const connectDB = require("./app/config/db");
 
 const app = express();
 
+// app.use(
+//   session({
+//     secret: process.env.JWT_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: { secure: false },
+//   })
+// );
+
 app.use(
-  session({
-    secret: process.env.JWT_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false },
+  cookieSession({
+    name: "session",
+    keys: ["codeweaver"],
+    maxAge: 24 * 60 * 60 * 100,
   })
 );
 
@@ -41,8 +49,8 @@ const oauth = require("./routes/oauth");
 app.use(`${version}/oauth`, oauth);
 
 // google oAuth request
-const oauthReq = require("./routes/request");
-app.use(`${version}/oauth/request`, oauthReq);
+// const oauthReq = require("./routes/request");
+// app.use(`${version}/oauth/request`, oauthReq);
 
 // ========== Add Other Routes from here on
 const notes = require("./routes/notes");

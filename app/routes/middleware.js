@@ -40,6 +40,7 @@ module.exports = function (app) {
         "TRACE",
         "PATCH",
       ],
+      credentials: true,
     })
   );
 

@@ -9,9 +9,8 @@ passport.use(
       callbackURL: process.env.CALLBACK_URL,
       scope: ["profile", "email"],
     },
-    function (accessToken, refreshToken, profile, done) {
-      // callback(null, profile);
-      done(null, profile);
+    function (accessToken, refreshToken, profile, callback) {
+      callback(null, profile);
     }
   )
 );
