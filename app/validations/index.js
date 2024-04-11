@@ -9,6 +9,7 @@ module.exports = {
 
   Project: Joi.object({
     projectUserId: Joi.string(),
+    organisationId: Joi.string(),
     name: Joi.string().min(3).max(50).required(),
     artist: Joi.string().min(3).max(50).required(),
     type: Joi.string()

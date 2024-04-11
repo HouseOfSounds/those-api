@@ -9,7 +9,13 @@ const createProject = async (req, res) => {
   const { id } = jwt.verify(token, secretKey);
 
   try {
-    const proBody = { projectUserId: id, ...req.body };
+    const { organisationid } = req.params;
+    const proBody = {
+      projectUserId: id,
+      organisationId: organisationid,
+      ...req.body,
+    };
+
     const project = new Project(proBody);
 
     await project.save();
