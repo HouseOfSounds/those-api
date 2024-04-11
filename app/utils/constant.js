@@ -1,8 +1,8 @@
 module.exports.CATEGORY = {
   PRODUCER: "PRODUCER",
-  ARTISTS: "ARTISTS",
-  FANS: "FANS",
-  ENGINEERS: "ENGINEERS & OTHERS",
+  ARTIST: "ARTIST",
+  FAN: "FAN",
+  ENGINEER: "ENGINEER & OTHERS",
 };
 
 module.exports.PLAN = {

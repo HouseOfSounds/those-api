@@ -51,6 +51,21 @@ module.exports = function (app) {
   //   next();
   // });
 
+  app.use((req, res, next) => {
+    const allowedOrigins = [
+      "https://beatlab.vercel.app",
+      "http://beatlab.vercel.app",
+      "https://localhost:3000",
+    ];
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+
+    next();
+  });
+
   // app.use(raw());
 
   if (process.env.NODE_ENV === "development") {

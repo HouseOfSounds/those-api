@@ -41,10 +41,10 @@ module.exports = {
     body: {
       schema: Joi.object({
         email: Joi.string().email().trim().lowercase().required(),
-        password: Joi.string().required(),
+        password: Joi.string(),
         fullname: Joi.string().max(100).trim().required(),
         category: Joi.string()
-          .valid("PRODUCER", "ARTISTS", "FANS", "ENGINEERS & OTHERS")
+          .valid("PRODUCER", "ARTIST", "FAN", "ENGINEER & OTHERS")
           .trim()
           .required(),
         plan: Joi.string()
