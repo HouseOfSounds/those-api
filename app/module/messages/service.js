@@ -2,7 +2,7 @@ const { Message } = require("./message");
 const jwt = require("jsonwebtoken");
 const { sendEMail } = require("../../utils/sendemail");
 
-const secretKey = process.env.JWT_SECRET;
+// const secretKey = process.env.JWT_SECRET;
 
 const createMessage = async (req, res) => {
   console.log("==== Creating Message ====");
