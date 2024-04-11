@@ -1,37 +1,14 @@
 const bcrypt = require("bcrypt");
 const { User } = require("./model");
-const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const { ACCOUNT_STATUS } = require("../../utils/constant");
-
+const { sendEMail } = require("../../utils/sendemail");
 const secretKey = process.env.JWT_SECRET;
 const duration = process.env.JWT_TOKEN_VALIDITY;
-// const secreteKey = process.env.APP_KEY;
-
-const senderMail = process.env.SENDER_EMAIL;
-const senderPassword = process.env.SENDER_PASSWORD;
-const host = process.env.MAIL_HOST;
-const port = process.env.MAIL_PORT;
-
-const transporter = nodemailer.createTransport({
-  host,
-  port,
-  secure: true,
-  auth: {
-    user: senderMail,
-    pass: senderPassword,
-  },
-});
 
 async function setAuth(userObj) {
   const id = userObj._id;
   userObj.id = id;
-
-  // userObj.token = await encodeJwt({
-  //   data: { id, createdAt: new Date() },
-  //   secreteKey: process.env.APP_KEY,
-  //   duration: process.env.JWT_TOKEN_VALIDITY,
-  // });
 
   userObj.token = jwt.sign(
     {
@@ -76,7 +53,7 @@ const signup = async (body) => {
       const mailSubject = "Account Creation";
       const mailBody = `Your account has been created successfully. \nClick the following link to verify your email: ${theLink}`;
 
-      sendEMail(senderMail, email, mailSubject, mailBody);
+      await sendEMail(email, mailSubject, mailBody);
       //===============================
 
       return {
@@ -169,7 +146,7 @@ const forgotPassword = async (req, res) => {
     const mailSubject = "BeatLab Password Reset";
     const mailBody = `Click the following link to reset your password: ${theLink}`;
 
-    await sendEMail(senderMail, email, mailSubject, mailBody);
+    await sendEMail(email, mailSubject, mailBody);
 
     res.json({
       data: { message: "Password reset email sent !", token: resetToken },
@@ -210,7 +187,7 @@ const resetPassword = async (req, res) => {
     const mailSubject = "BeatLab Password Changed !";
     const mailBody = `Your account [${email}], has been successfully updated with a new password.`;
 
-    await sendEMail(senderMail, email, mailSubject, mailBody);
+    await sendEMail(email, mailSubject, mailBody);
 
     return res.json({
       data: user,
@@ -253,7 +230,7 @@ const changePassword = async (req, res) => {
     const mailSubject = "BeatLab Password Changed !";
     const mailBody = `Your account [${email}], has been successfully updated with a new password.`;
 
-    await sendEMail(senderMail, email, mailSubject, mailBody);
+    await sendEMail(email, mailSubject, mailBody);
 
     return res.json({
       data: user,
@@ -329,7 +306,7 @@ const verifyAccount = async (req, res) => {
     const mailSubject = "Account Verification Completed!";
     const mailBody = `Your account [${email}], has been successfully verified.`;
 
-    await sendEMail(senderMail, email, mailSubject, mailBody);
+    await sendEMail(email, mailSubject, mailBody);
 
     res.status(200).json({
       data: user,
@@ -339,17 +316,6 @@ const verifyAccount = async (req, res) => {
     console.error("Error occurred during account verification:", error);
     res.status(500).json({ error: error.message });
   }
-};
-
-const sendEMail = async (from, to, subject, text) => {
-  const mailOptions = {
-    from,
-    to,
-    subject,
-    text,
-  };
-
-  await transporter.sendMail(mailOptions);
 };
 
 module.exports = {
