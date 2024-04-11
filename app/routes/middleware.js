@@ -55,7 +55,7 @@ module.exports = function (app) {
     const allowedOrigins = [
       "https://beatlab.vercel.app",
       "http://beatlab.vercel.app",
-      "https://localhost:3000",
+      "http://localhost:3000",
     ];
     const origin = req.headers.origin;
 
