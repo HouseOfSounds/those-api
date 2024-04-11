@@ -9,10 +9,9 @@ const createProject = async (req, res) => {
   const { id } = jwt.verify(token, secretKey);
 
   const { organisationid } = req.params;
-  // console.log("uid", organisationid);
 
   try {
-    console.log("uid", organisationid);
+    console.log("orgid", organisationid);
 
     const proBody = {
       projectUserId: id,
@@ -69,16 +68,24 @@ const listProjects = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const { id } = jwt.verify(token, secretKey);
 
+  const { organisationid } = req.params;
+
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     const skip = (page - 1) * pageSize;
 
-    const projects = await Project.find({ projectUserId: id })
-      .skip(skip)
-      .limit(pageSize);
+    let filter;
 
-    const total = await Project.countDocuments({ projectUserId: id });
+    if (organisationid !== undefined) {
+      filter = { projectUserId: id, organisationId: organisationid };
+    } else {
+      filter = { projectUserId: id };
+    }
+
+    const projects = await Project.find(filter).skip(skip).limit(pageSize);
+
+    const total = await Project.countDocuments(filter);
     const pages = Math.ceil(total / pageSize);
 
     return {

@@ -37,6 +37,12 @@ route.delete(
 
 route.get("/project/list-projects", authMiddleware, controller.listProjects);
 
+route.get(
+  "/project/list-projects/:organisationid",
+  authMiddleware,
+  controller.listProjects
+);
+
 route.put(
   "/project/edit-project/:projectid",
   authMiddleware,
