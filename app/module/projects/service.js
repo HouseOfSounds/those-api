@@ -8,13 +8,20 @@ const createProject = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const { id } = jwt.verify(token, secretKey);
 
+  const { organisationid } = req.params;
+  // console.log("uid", organisationid);
+
   try {
-    const { organisationid } = req.params;
+    console.log("uid", organisationid);
+
     const proBody = {
       projectUserId: id,
-      organisationId: organisationid,
       ...req.body,
     };
+
+    if (organisationid !== undefined) {
+      proBody.organisationId = organisationid;
+    }
 
     const project = new Project(proBody);
 

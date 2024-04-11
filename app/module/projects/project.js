@@ -6,6 +6,11 @@ const projectSchema = new mongoose.Schema({
     required: true,
   },
 
+  organisationId: {
+    type: String,
+    required: false,
+  },
+
   name: {
     type: String,
     required: true,

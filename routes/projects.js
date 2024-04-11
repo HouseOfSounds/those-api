@@ -16,6 +16,13 @@ route.get("/projects", (req, res) => {
 });
 
 route.post(
+  "/project/create-project",
+  authMiddleware,
+  validator(validations.Project),
+  controller.createProject
+);
+
+route.post(
   "/project/create-project/:organisationid",
   authMiddleware,
   validator(validations.Project),
