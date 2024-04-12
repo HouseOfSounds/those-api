@@ -15,17 +15,17 @@ const app = express();
 
 // +++++++++++++++++++++++++++++++++++++++++++++
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (origin.includes("http://localhost:3000")) return callback(null, true);
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       if (!origin) return callback(null, true);
+//       if (origin.includes("http://localhost:3000")) return callback(null, true);
 
-      return callback(null, true);
-    },
-    credentials: true,
-  })
-);
+//       return callback(null, true);
+//     },
+//     credentials: true,
+//   })
+// );
 
 // app.use(
 //   cors({
@@ -45,7 +45,7 @@ app.use(
 //   })
 // );
 
-// app.use(cors());
+app.use(cors());
 
 // app.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
