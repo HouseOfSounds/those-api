@@ -15,18 +15,17 @@ const app = express();
 
 // +++++++++++++++++++++++++++++++++++++++++++++
 
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin) return callback(null, true);
-//       if (origin.includes("http://localhost:3000"))
-//         return callback(null, true);
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (origin.includes("http://localhost:3000")) return callback(null, true);
 
-//       return callback(null, true);
-//     },
-//     credentials: true,
-//   })
-// );
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
 
 // app.use(
 //   cors({
@@ -46,27 +45,27 @@ const app = express();
 //   })
 // );
 
-app.use(cors());
+// app.use(cors());
 
 // app.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
 //   next();
 // });
 
-app.use((req, res, next) => {
-  const allowedOrigins = [
-    "https://beatlab.vercel.app",
-    "http://beatlab.vercel.app",
-    "http://localhost:3000",
-  ];
-  const origin = req.headers.origin;
+// app.use((req, res, next) => {
+//   const allowedOrigins = [
+//     "https://beatlab.vercel.app",
+//     "http://beatlab.vercel.app",
+//     "http://localhost:3000",
+//   ];
+//   const origin = req.headers.origin;
 
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
+//   if (allowedOrigins.includes(origin)) {
+//     res.setHeader("Access-Control-Allow-Origin", origin);
+//   }
 
-  next();
-});
+//   next();
+// });
 // +++++++++++++++++++++++++++++++++++++++++++++
 
 // app.use(
