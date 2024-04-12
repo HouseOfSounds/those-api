@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const axios = require("axios");
 
 const passport = require("passport");
 const cookieSession = require("cookie-session");
@@ -101,7 +102,30 @@ app.use(version, user); //user route
 const authRoute = require("./routes/auth");
 app.use(`${version}/auth`, authRoute);
 
-// // google oAuth
+// //---------------------------------------------
+// app.get("/gauth", async (req, res) => {
+//   console.log("Google Authentication");
+//   try {
+//     const response = await axios.get(
+//       "https://accounts.google.com/o/oauth2/v2/auth",
+//       {
+//         params: {
+//           response_type: "code",
+//           redirect_uri: process.env.REDIRECT_URL,
+//           scope: "profile email",
+//           client_id: process.env.CLIENT_ID,
+//         },
+//       }
+//     );
+
+//     res.send(response.data);
+//   } catch (error) {
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+// //---------------------------------------------
+
+// google oAuth
 // const oauth = require("./routes/oauth");
 // app.use(`${version}/oauth`, oauth);
 

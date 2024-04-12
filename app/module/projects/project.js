@@ -31,6 +31,12 @@ const projectSchema = new mongoose.Schema({
     required: true,
   },
 
+  status: {
+    type: String,
+    default: "IN PROGRESS",
+    required: false,
+  },
+
   startDate: {
     type: Date,
     required: true,

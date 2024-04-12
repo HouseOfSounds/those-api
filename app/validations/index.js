@@ -17,6 +17,7 @@ module.exports = {
       .trim()
       .required(),
     description: Joi.string().min(3).max(500).required(),
+    status: Joi.string().default("IN PROGRESS"),
 
     startDate: Joi.date().min(new Date()).required(),
     endDate: Joi.date().min(new Date()).required(),

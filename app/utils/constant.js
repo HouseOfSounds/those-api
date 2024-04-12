@@ -25,3 +25,9 @@ module.exports.PROJECT_TYPE = {
   AUDIOBOOK: "AUDIOBOOK",
   OTHER: "OTHER",
 };
+
+module.exports.PROJECT_STATUS = {
+  IN_PROGRESS: "IN PROGRESS",
+  ON_HOLD: "ON HOLD",
+  COMPLETED: "COMPLETED",
+};
