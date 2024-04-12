@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+
 const passport = require("passport");
 const cookieSession = require("cookie-session");
 const session = require("express-session");
@@ -10,6 +12,62 @@ const middlewares = require("./app/routes/middleware");
 const connectDB = require("./app/config/db");
 
 const app = express();
+
+// +++++++++++++++++++++++++++++++++++++++++++++
+
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       if (!origin) return callback(null, true);
+//       if (origin.includes("http://localhost:3000"))
+//         return callback(null, true);
+
+//       return callback(null, true);
+//     },
+//     credentials: true,
+//   })
+// );
+
+// app.use(
+//   cors({
+//     origin: ["http://localhost:3000", "https://beatlab.vercel.app"],
+//     methods: [
+//       "GET",
+//       "HEAD",
+//       "POST",
+//       "PUT",
+//       "DELETE",
+//       "CONNECT",
+//       "OPTIONS",
+//       "TRACE",
+//       "PATCH",
+//     ],
+//     credentials: true,
+//   })
+// );
+
+app.use(cors());
+
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   next();
+// });
+
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    "https://beatlab.vercel.app",
+    "http://beatlab.vercel.app",
+    "http://localhost:3000",
+  ];
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  next();
+});
+// +++++++++++++++++++++++++++++++++++++++++++++
 
 // app.use(
 //   session({
