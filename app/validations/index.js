@@ -55,4 +55,28 @@ module.exports = {
     subject: Joi.string().min(5).max(100).required(),
     message: Joi.string().min(10).max(500).required(),
   }),
+
+  Task: Joi.object({
+    taskProjectId: Joi.string(),
+    taskUserId: Joi.string(),
+    name: Joi.string().min(3).max(100).trim().required(),
+    description: Joi.string().max(500),
+    status: Joi.string().default("IN PROGRESS"),
+    budget: Joi.number().required(),
+    members: Joi.array().items(Joi.string().trim()),
+    startDate: Joi.date().min(new Date()).required(),
+    endDate: Joi.date().min(new Date()).required(),
+  }),
+
+  Subtask: Joi.object({
+    subtaskTaskId: Joi.string(),
+    subtaskUserId: Joi.string(),
+    name: Joi.string().min(3).max(100).trim().required(),
+    description: Joi.string().max(500),
+    status: Joi.string().default("IN PROGRESS"),
+    budget: Joi.number().required(),
+    members: Joi.array().items(Joi.string().trim()),
+    startDate: Joi.date().min(new Date()).required(),
+    endDate: Joi.date().min(new Date()).required(),
+  }),
 };

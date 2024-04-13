@@ -38,17 +38,18 @@ const createProject = async (req, res) => {
 const deleteProject = async (req, res) => {
   console.log("==== Deleting Project ====");
   const token = req.headers.authorization.split(" ")[1];
-
   const { id } = jwt.verify(token, secretKey);
 
   try {
     const { projectid } = req.params;
     const filter = { _id: projectid, projectUserId: id };
 
+    const project = await Project.findOne(filter);
     const response = await Project.deleteOne(filter);
     const { deletedCount } = response;
     if (deletedCount == 1) {
       return {
+        project,
         response,
         message: `Project Deleted Successfully`,
       };
@@ -105,7 +106,6 @@ const listProjects = async (req, res) => {
 const editProject = async (req, res) => {
   console.log("==== Editing Project ====");
   const token = req.headers.authorization.split(" ")[1];
-
   const { id } = jwt.verify(token, secretKey);
 
   try {

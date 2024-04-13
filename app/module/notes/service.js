@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { Note } = require("./note");
+const { Organisation } = require("../../validations");
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -26,7 +27,7 @@ const createNote = async (req, res) => {
       message: `Note Created Successfully`,
     };
   } catch (err) {
-    throw err;
+    return { error: "Internal server error" };
   }
 };
 
@@ -40,10 +41,12 @@ const deleteNote = async (req, res) => {
     const { noteid } = req.params;
     const filter = { _id: noteid, noteUserId: id };
 
+    const note = await Organisation.findOne(filter);
     const response = await Note.deleteOne(filter);
     const { deletedCount } = response;
     if (deletedCount == 1) {
       return {
+        note,
         response,
         message: `Note Deleted Successfully`,
       };
@@ -54,7 +57,7 @@ const deleteNote = async (req, res) => {
       };
     }
   } catch (err) {
-    throw err;
+    return { error: "Internal server error" };
   }
 };
 
@@ -85,7 +88,7 @@ const listNotes = async (req, res) => {
     };
   } catch (error) {
     console.error("Error listing notes:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return { error: "Internal server error" };
   }
 };
 
@@ -117,7 +120,7 @@ const editNote = async (req, res) => {
     }
   } catch (error) {
     console.error("Error updating note:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return { error: "Internal server error" };
   }
 };
 

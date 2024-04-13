@@ -33,10 +33,12 @@ const deleteOrganisation = async (req, res) => {
     const { organisationid } = req.params;
     const filter = { _id: organisationid, organisationUserId: id };
 
+    const organisation = await Organisation.findOne(filter);
     const response = await Organisation.deleteOne(filter);
     const { deletedCount } = response;
     if (deletedCount == 1) {
       return {
+        organisation,
         response,
         message: `Organisation Deleted Successfully`,
       };
@@ -47,7 +49,7 @@ const deleteOrganisation = async (req, res) => {
       };
     }
   } catch (err) {
-    throw err;
+    return { error: "Internal server error" };
   }
 };
 
@@ -78,7 +80,7 @@ const listOrganisations = async (req, res) => {
     };
   } catch (error) {
     console.error("Error listing organisations:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return { error: "Internal server error" };
   }
 };
 
@@ -111,7 +113,7 @@ const editOrganisation = async (req, res) => {
     }
   } catch (error) {
     console.error("Error updating organisation:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return { error: "Internal server error" };
   }
 };
 

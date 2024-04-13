@@ -23,7 +23,7 @@ const createMessage = async (req, res) => {
       message: `Message Created Successfully`,
     };
   } catch (err) {
-    throw err;
+    return { error: "Internal server error" };
   }
 };
 
@@ -36,10 +36,12 @@ const deleteMessage = async (req, res) => {
     const { messageid } = req.params;
     const filter = { _id: messageid };
 
+    const message = await Message.findOne(filter);
     const response = await Message.deleteOne(filter);
     const { deletedCount } = response;
     if (deletedCount == 1) {
       return {
+        message,
         response,
         message: `Message Deleted Successfully`,
       };
@@ -50,7 +52,7 @@ const deleteMessage = async (req, res) => {
       };
     }
   } catch (err) {
-    throw err;
+    return { error: "Internal server error" };
   }
 };
 
@@ -79,7 +81,7 @@ const listMessages = async (req, res) => {
     };
   } catch (error) {
     console.error("Error listing messages:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return { error: "Internal server error" };
   }
 };
 
@@ -110,7 +112,7 @@ const editMessage = async (req, res) => {
     }
   } catch (error) {
     console.error("Error updating message:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return { error: "Internal server error" };
   }
 };
 

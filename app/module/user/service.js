@@ -62,7 +62,7 @@ const signup = async (body) => {
       };
     }
   } catch (err) {
-    throw err;
+    return { error: "Internal server error" };
   }
 };
 
@@ -152,7 +152,7 @@ const forgotPassword = async (req, res) => {
       data: { message: "Password reset email sent !", token: resetToken },
     });
   } catch (error) {
-    res.status(500).json({ error });
+    return { error: "Internal server error" };
   }
 };
 
@@ -237,7 +237,7 @@ const changePassword = async (req, res) => {
       message: "Password changed successfully",
     });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return { error: "Internal server error" };
   }
 };
 
@@ -275,7 +275,7 @@ const updateProfile = async (req, res) => {
       };
     }
   } catch (err) {
-    throw err;
+    return { error: "Internal server error" };
   }
 };
 
@@ -329,5 +329,3 @@ module.exports = {
   updateProfile,
   verifyAccount,
 };
-
-// UserModel.findByIdAndUpdate(userId, { organisations: organisationIds }, { new: true })

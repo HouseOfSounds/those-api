@@ -150,6 +150,15 @@ app.use(version, organisations);
 //Messages route
 const messages = require("./routes/messages");
 app.use(version, messages);
+
+//Tasks route
+const tasks = require("./routes/tasks");
+app.use(version, tasks);
+
+//Subtasks route
+const subtasks = require("./routes/subtasks");
+app.use(version, subtasks);
+
 // ==========   End of Routes   ==========
 
 (async () => {
