@@ -26,6 +26,7 @@
     "express-session": "^1.18.0",
     "google-auth-library": "^9.7.0",
     "googleapis": "^134.0.0",
+    "http-proxy-middleware": "^3.0.0",
     "iyasunday": "^1.0.74",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",

@@ -3,24 +3,26 @@ const express = require("express");
 const passport = require("passport");
 const session = require("express-session");
 const cors = require("cors");
-const axios = require("axios");
 
 const route = Router();
 
 const app = express();
 
-// app.use(cors({ credentials: true }));
-app.use(cors());
+// route.use(cors());
+
+app.use(
+  cors({
+    origin: "http://localhost:3001", // Replace with your frontend domain
+    credentials: true, // Enable CORS credentials (e.g., cookies, authorization headers)
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use((req, res, next) => {
-  //allow access from every, elminate CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.removeHeader("x-powered-by");
-  //set the allowed HTTP methods to be requested
-  res.setHeader("Access-Control-Allow-Methods", "POST");
-  //headers clients can use in their requests
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  //allow request to continue and be handled by routes
+  res.header("Access-Control-Allow-Origin", "*"); // Allow all origins
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 
@@ -55,6 +57,7 @@ passport.use(
     async function (accessToken, refreshToken, profile, done) {
       //===========================
       const { User } = require("../app/module/user/model");
+      const axios = require("axios");
 
       const { email, name, given_name, family_name, picture } = profile._json;
       const theUser = User.findOne({ email });
@@ -104,9 +107,7 @@ passport.use(
           });
       }
 
-      // ===========================
-
-      // console.log("The User", theUser);
+      //===========================
 
       return done(null, profile);
     }
@@ -121,14 +122,11 @@ route.get(
 route.get(
   "/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
-  function (req, res, next) {
+  function (req, res) {
     // Successful authentication, redirect home.
     // res.redirect("/");
-    // console.log("Authenticated", req.user._json);
-
-    res.send(req.user._json);
-    // // return req.user._json;
-    // next();
+    console.log("Authenticated");
+    res.send("Authentication Completed");
   }
 );
 

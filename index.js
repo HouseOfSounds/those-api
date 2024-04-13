@@ -6,7 +6,7 @@ const axios = require("axios");
 const passport = require("passport");
 const cookieSession = require("cookie-session");
 const session = require("express-session");
-const passportSetup = require("./passport");
+// const passportSetup = require("./passport");
 
 const middlewares = require("./app/routes/middleware");
 // const routes = require("./app/routes");
@@ -99,8 +99,8 @@ app.use(version, user); //user route
 // ==========================================
 
 // google auth with passport
-const authRoute = require("./routes/auth");
-app.use(`${version}/auth`, authRoute);
+// const authRoute = require("./routes/auth");
+// app.use(`${version}/auth`, authRoute);
 
 // //---------------------------------------------
 // app.get("/gauth", async (req, res) => {
@@ -129,22 +129,25 @@ app.use(`${version}/auth`, authRoute);
 // const oauth = require("./routes/oauth");
 // app.use(`${version}/oauth`, oauth);
 
-//=============================================
-// google oAuth request
-// const oauthReq = require("./routes/request");
-// app.use(`${version}/oauth/request`, oauthReq);
-//=============================================
-
 // ========== Add Other Routes from here on
+
+// google oAuth request
+const oauthReq = require("./routes/request");
+app.use(`${version}/oauth`, oauthReq);
+
+//Notes route
 const notes = require("./routes/notes");
 app.use(version, notes);
 
+//Projects route
 const projects = require("./routes/projects");
 app.use(version, projects);
 
+//Organisations route
 const organisations = require("./routes/organisations");
 app.use(version, organisations);
 
+//Messages route
 const messages = require("./routes/messages");
 app.use(version, messages);
 // ==========   End of Routes   ==========
