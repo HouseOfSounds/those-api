@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const axios = require("axios");
 
 const passport = require("passport");
 const cookieSession = require("cookie-session");
@@ -47,36 +46,17 @@ const app = express();
 // );
 
 app.use(cors());
-
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   next();
-// });
-
-// app.use((req, res, next) => {
-//   const allowedOrigins = [
-//     "https://beatlab.vercel.app",
-//     "http://beatlab.vercel.app",
-//     "http://localhost:3000",
-//   ];
-//   const origin = req.headers.origin;
-
-//   if (allowedOrigins.includes(origin)) {
-//     res.setHeader("Access-Control-Allow-Origin", origin);
-//   }
-
-//   next();
-// });
-// +++++++++++++++++++++++++++++++++++++++++++++
-
-// app.use(
-//   session({
-//     secret: process.env.JWT_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: { secure: false },
-//   })
-// );
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  // Optionally, if you're using cookies or sessions with credentials
+  // res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 app.use(
   cookieSession({
@@ -101,29 +81,6 @@ app.use(version, user); //user route
 // google auth with passport
 // const authRoute = require("./routes/auth");
 // app.use(`${version}/auth`, authRoute);
-
-// //---------------------------------------------
-// app.get("/gauth", async (req, res) => {
-//   console.log("Google Authentication");
-//   try {
-//     const response = await axios.get(
-//       "https://accounts.google.com/o/oauth2/v2/auth",
-//       {
-//         params: {
-//           response_type: "code",
-//           redirect_uri: process.env.REDIRECT_URL,
-//           scope: "profile email",
-//           client_id: process.env.CLIENT_ID,
-//         },
-//       }
-//     );
-
-//     res.send(response.data);
-//   } catch (error) {
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-// //---------------------------------------------
 
 // google oAuth
 // const oauth = require("./routes/oauth");

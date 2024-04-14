@@ -2,27 +2,26 @@ const { Router } = require("express");
 const express = require("express");
 const passport = require("passport");
 const session = require("express-session");
-const cors = require("cors");
+// const cors = require("cors");
 const axios = require("axios");
 
 const route = Router();
 
 const app = express();
 
-// app.use(cors({ credentials: true }));
-app.use(cors());
+// app.use(cors());
 
-app.use((req, res, next) => {
-  //allow access from every, elminate CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.removeHeader("x-powered-by");
-  //set the allowed HTTP methods to be requested
-  res.setHeader("Access-Control-Allow-Methods", "POST");
-  //headers clients can use in their requests
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  //allow request to continue and be handled by routes
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//   );
+//   // Optionally, if you're using cookies or sessions with credentials
+//   // res.header("Access-Control-Allow-Credentials", "true");
+//   next();
+// });
 
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
@@ -127,9 +126,22 @@ route.get(
     // console.log("Authenticated", req.user._json);
 
     res.send(req.user._json);
+    // res.send(req.user);
     // // return req.user._json;
     // next();
   }
 );
+
+route.get("/api/proxy", async (req, res) => {
+  try {
+    // const response = await axios.get("http://localhost:3000/v1/oauth/request");
+    // // res.json(response.data);
+    // res.send(response.data);
+    res.redirect("http://localhost:3000/v1/oauth/request");
+  } catch (error) {
+    console.error("Proxy request error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 module.exports = route;
