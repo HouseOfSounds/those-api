@@ -318,6 +318,45 @@ const verifyAccount = async (req, res) => {
   }
 };
 
+const viewUser = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const { id } = jwt.verify(token, secretKey);
+
+    const user = await User.findById(id);
+
+    return {
+      data: user,
+      message: `User record listed.`,
+    };
+  } catch (err) {
+    return { error: "Internal server error" };
+  }
+};
+
+const viewTaskUser = async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    const excludedFields = {
+      password: 0,
+      createdAt: 0,
+      token: 0,
+      plan: 0,
+      organisations: 0,
+    };
+
+    const user = await User.findById(userid).select(excludedFields);
+
+    return {
+      data: user,
+      message: `User record listed.`,
+    };
+  } catch (err) {
+    return { error: "Internal server error" };
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -328,4 +367,6 @@ module.exports = {
   changePassword,
   updateProfile,
   verifyAccount,
+  viewUser,
+  viewTaskUser,
 };

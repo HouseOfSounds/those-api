@@ -44,4 +44,14 @@ route.patch(
 
 route.post("/user/autologin", controller.autoLogin);
 
+route.post("/user/view-user", authMiddleware, controller.viewUser);
+
+// route.post(
+//   "/user/view-task-user/:userid",
+//   authMiddleware,
+//   controller.viewTaskUser
+// );
+
+route.post("/user/view-user/:userid", authMiddleware, controller.viewTaskUser);
+
 module.exports = route;

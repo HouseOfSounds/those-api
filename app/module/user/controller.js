@@ -93,6 +93,26 @@ async function updateProfile(req, res) {
   }
 }
 
+async function viewUser(req, res) {
+  try {
+    const response = await service.viewUser(req, res);
+
+    return res.status(200).json({ response });
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function viewTaskUser(req, res) {
+  try {
+    const response = await service.viewTaskUser(req, res);
+
+    return res.status(200).json({ response });
+  } catch (err) {
+    throw err;
+  }
+}
+
 module.exports = {
   signup,
   login,
@@ -103,4 +123,6 @@ module.exports = {
   changePassword,
   updateProfile,
   verifyAccount,
+  viewUser,
+  viewTaskUser,
 };

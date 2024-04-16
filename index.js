@@ -15,48 +15,24 @@ const app = express();
 
 // +++++++++++++++++++++++++++++++++++++++++++++
 
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin) return callback(null, true);
-//       if (origin.includes("http://localhost:3000")) return callback(null, true);
+app.use(
+  cors({
+    // origin: "http://localhost:3001",
+    // optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
+);
 
-//       return callback(null, true);
-//     },
-//     credentials: true,
-//   })
-// );
-
-// app.use(
-//   cors({
-//     origin: ["http://localhost:3000", "https://beatlab.vercel.app"],
-//     methods: [
-//       "GET",
-//       "HEAD",
-//       "POST",
-//       "PUT",
-//       "DELETE",
-//       "CONNECT",
-//       "OPTIONS",
-//       "TRACE",
-//       "PATCH",
-//     ],
-//     credentials: true,
-//   })
-// );
-
-app.use(cors());
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3001");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  // Optionally, if you're using cookies or sessions with credentials
-  // res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//   );
+//   // Optionally, if you're using cookies or sessions with credentials
+//   // res.header("Access-Control-Allow-Credentials", "true");
+//   next();
+// });
 
 app.use(
   cookieSession({
@@ -121,6 +97,7 @@ app.use(version, subtasks);
 (async () => {
   try {
     await connectDB();
+
     app.listen(process.env.PORT, (err) => {
       if (err) {
         console.error("Error: ", err);
@@ -128,6 +105,33 @@ app.use(version, subtasks);
       }
       console.log(`Server active on port ${process.env.PORT}`);
     });
+
+    // ===========================================
+    // const path = require("path");
+    // app.use(express.static(path.join(__dirname)));
+
+    // const https = require("https");
+    // const fs = require("fs");
+
+    // const options = {
+    //   key: fs.readFileSync("./cert/key.pem"),
+    //   cert: fs.readFileSync("./cert/cert.pem"),
+    //   secureProtocol: "TLSv1_2_method",
+    // };
+
+    // const server = https.createServer(options, app, (req, res) => {
+    //   res.writeHead(200);
+    //   res.end("HTTPS server is working with a self-signed certificate!");
+    // });
+
+    // const port = process.env.PORT || 443;
+    // const hostname = "localhost";
+
+    // server.listen(port, () => {
+    //   console.log(`Server running at https://${hostname}:${port}/`);
+    // });
+
+    // ===========================================
   } catch (err) {
     console.error("Error: ", err);
     process.exit(1);

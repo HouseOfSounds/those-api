@@ -29,7 +29,7 @@ const subtaskSchema = new mongoose.Schema({
 
   budget: {
     type: Number,
-    required: true,
+    required: false,
   },
 
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],

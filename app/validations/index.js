@@ -74,7 +74,7 @@ module.exports = {
     name: Joi.string().min(3).max(100).trim(),
     description: Joi.string().max(500),
     status: Joi.string().default("IN PROGRESS"),
-    budget: Joi.number().required(),
+    budget: Joi.number(),
     members: Joi.array().items(Joi.string().trim()),
     startDate: Joi.date().min(new Date()),
     endDate: Joi.date().min(new Date()),
