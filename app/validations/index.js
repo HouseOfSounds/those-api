@@ -79,4 +79,12 @@ module.exports = {
     startDate: Joi.date().min(new Date()),
     endDate: Joi.date().min(new Date()),
   }),
+
+  Invite: Joi.object({
+    inviteUserId: Joi.string(),
+    email: Joi.string().email().trim().lowercase().required(),
+    status: Joi.string().default("IN PROGRESS"),
+    // createdAt: Joi.date().min(new Date()),
+    // endDate: Joi.date().min(new Date()),
+  }),
 };

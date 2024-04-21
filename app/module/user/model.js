@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
   },
 
   organisations: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "organisation" },
+    { type: mongoose.Schema.Types.ObjectId, ref: "organisations" },
   ],
 
   token: {

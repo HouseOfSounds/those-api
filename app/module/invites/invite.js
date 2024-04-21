@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
-const messageSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-
+const inviteSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -16,19 +11,25 @@ const messageSchema = new mongoose.Schema({
     ],
   },
 
-  subject: {
+  inviteUserId: {
     type: String,
-    required: true,
+    required: false,
   },
 
-  message: {
+  status: {
     type: String,
-    required: true,
+    default: "IN PROGRESS",
+    required: false,
   },
 
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+
+  endDate: {
+    type: Date,
+    required: false,
   },
 
   deleted: {
@@ -38,8 +39,8 @@ const messageSchema = new mongoose.Schema({
   },
 });
 
-const Message = mongoose.model("message", messageSchema);
+const Invite = mongoose.model("invite", inviteSchema);
 
 module.exports = {
-  Message,
+  Invite,
 };

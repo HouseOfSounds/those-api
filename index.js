@@ -92,6 +92,17 @@ app.use(version, tasks);
 const subtasks = require("./routes/subtasks");
 app.use(version, subtasks);
 
+//Invites route
+const invites = require("./routes/invites");
+app.use(version, invites);
+
+//external BE endpoint route
+app.get(`${version}/beroute`, (req, res) => {
+  res.status(200).json({
+    // beUrl: "http://localhost:3000",
+    beUrl: "http://51.20.37.195:3000",
+  });
+});
 // ==========   End of Routes   ==========
 
 (async () => {
@@ -116,8 +127,12 @@ app.use(version, subtasks);
     // const options = {
     //   key: fs.readFileSync("./cert/key.pem"),
     //   cert: fs.readFileSync("./cert/cert.pem"),
-    //   secureProtocol: "TLSv1_2_method",
+    //   rejectUnauthorized: false,
+    //   // ca: fs.readFileSync("./cert/csr.pem"),
+    //   // secureProtocol: "TLSv1_2_method",
     // };
+
+    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
     // const server = https.createServer(options, app, (req, res) => {
     //   res.writeHead(200);
@@ -125,10 +140,9 @@ app.use(version, subtasks);
     // });
 
     // const port = process.env.PORT || 443;
-    // const hostname = "localhost";
 
     // server.listen(port, () => {
-    //   console.log(`Server running at https://${hostname}:${port}/`);
+    //   console.log(`Server running on ${port}`);
     // });
 
     // ===========================================
